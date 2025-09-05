@@ -3,11 +3,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { INITIAL_CODE } from "@/constants/initial-data";
-import { INITIAL_WIDTHS } from "@/constants/panel-config";
 import CodeEditorLayout from "@/components/layout/code-editor-layout";
 import RoomEnterModal from "@/components/features/room/room-enter-modal";
 import { RoomStorage, type RoomInfo } from "@/utils/room-storage";
 import { useWebSocketManager } from "@/hooks/useWebSocketManager";
+import { useSidebarPanels } from "@/hooks/useSidebarPanels";
 import { toast } from "react-toastify";
 import { sanitizeCode, desanitizeCode } from "@/utils/code-formatter";
 import { RoomProvider } from "@/contexts/room-context";
@@ -39,11 +39,18 @@ export default function CodeShareRoomPage() {
   // 현재 표시될 코드 (라이브 코드 또는 스냅샷 코드)
   const displayCode = currentVersion !== null ? snapshotCode : liveCode;
 
-  // Layout state
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [activePanel, setActivePanel] = useState<string | null>(null);
-  const [leftWidth, setLeftWidth] = useState<number>(INITIAL_WIDTHS.LEFT);
-  const [rightWidth, setRightWidth] = useState<number>(INITIAL_WIDTHS.RIGHT);
+  // Layout state - 커스텀 훅으로 통합 관리
+  const {
+    isSidebarOpen,
+    activePanel,
+    leftWidth,
+    rightWidth,
+    toggleSidebar,
+    togglePanel,
+    handleLeftResize,
+    handleRightResize,
+    closePanel,
+  } = useSidebarPanels();
 
   // 스냅샷이 선택되었는지 여부로 readOnly 상태 결정
   const isReadOnly = currentVersion !== null;
@@ -290,40 +297,16 @@ export default function CodeShareRoomPage() {
   );
 
   /**
-   * 우측 패널(질문, 투표) 토글 처리
+   * 우측 패널(질문, 투표) 토글 처리 - 스냅샷 선택시에만 가능
    */
-  const togglePanel = (panelName: string): void => {
-    // current session(currentVersion이 null)인 경우 패널을 열지 않음
-    if (currentVersion === null) return;
-
-    setActivePanel(activePanel === panelName ? null : panelName);
-  };
-
-  /**
-   * 좌측 사이드바(스냅샷) 크기 조절
-   */
-  const handleLeftResize = useCallback((delta: number): void => {
-    setLeftWidth((prev) => {
-      const newWidth = prev + delta;
-      return Math.min(
-        Math.max(newWidth, INITIAL_WIDTHS.MIN_LEFT),
-        window.innerWidth * INITIAL_WIDTHS.MAX_LEFT_RATIO
-      );
-    });
-  }, []);
-
-  /**
-   * 우측 패널 크기 조절
-   */
-  const handleRightResize = useCallback((delta: number): void => {
-    setRightWidth((prev) => {
-      const newWidth = prev + delta;
-      return Math.min(
-        Math.max(newWidth, INITIAL_WIDTHS.MIN_RIGHT),
-        window.innerWidth * INITIAL_WIDTHS.MAX_RIGHT_RATIO
-      );
-    });
-  }, []);
+  const handlePanelToggle = useCallback(
+    (panelName: "vote" | "question") => {
+      // 현재 세션(currentVersion이 null)인 경우 패널을 열 수 없음
+      const canOpen = currentVersion !== null;
+      togglePanel(panelName, canOpen);
+    },
+    [currentVersion, togglePanel]
+  );
 
   /**
    * 새로운 스냅샷 생성
@@ -371,7 +354,7 @@ export default function CodeShareRoomPage() {
       // 라이브 세션으로 돌아가기
       setCurrentVersion(null);
       setSnapshotCode(""); // 스냅샷 코드 초기화
-      setActivePanel(null); // 현재 세션으로 돌아갈 때는 패널 닫기
+      closePanel(); // 현재 세션으로 돌아갈 때는 패널 닫기
       return;
     }
 
@@ -405,8 +388,8 @@ export default function CodeShareRoomPage() {
               activePanel={activePanel}
               leftWidth={leftWidth}
               rightWidth={rightWidth}
-              onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-              onPanelChange={togglePanel}
+              onSidebarToggle={toggleSidebar}
+              onPanelChange={handlePanelToggle}
               onLeftResize={handleLeftResize}
               onRightResize={handleRightResize}
             >
