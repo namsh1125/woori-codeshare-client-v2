@@ -1,16 +1,23 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Modal from "@/components/common/modal";
+
+interface RoomCreateModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (title: string, password: string) => void;
+  preventEscClose?: boolean;
+}
 
 export default function RoomCreateModal({
   isOpen,
   onClose,
   onSubmit,
   preventEscClose,
-}) {
+}: RoomCreateModalProps) {
   const [title, setTitle] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     onSubmit(title, password);
   };
