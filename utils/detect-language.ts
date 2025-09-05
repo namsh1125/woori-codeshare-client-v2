@@ -1,4 +1,4 @@
-export function detectLanguage(code) {
+export function detectLanguage(code: string): string {
   if (!code || typeof code !== "string") return "javascript";
 
   const codeStr = code.trim().toLowerCase();
@@ -36,7 +36,7 @@ export function detectLanguage(code) {
 
   // 각 언어별 점수 계산
   Object.entries(patterns).forEach(
-    ([lang, { patterns: langPatterns, weight }]) => {
+    ([lang, { patterns: langPatterns, weight }]: [string, { patterns: RegExp[]; weight: number }]) => {
       let score = 0;
       for (const pattern of langPatterns) {
         if (pattern.test(codeStr)) {

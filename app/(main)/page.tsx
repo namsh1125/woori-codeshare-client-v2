@@ -18,7 +18,7 @@ export default function CreateRoomPage() {
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(true);
 
-  const handleCreateRoom = async (title, password) => {
+  const handleCreateRoom = async (title: string, password: string) => {
     try {
       const response = await fetch("/api/rooms", {
         method: "POST",

@@ -1,4 +1,16 @@
-export const PANEL_CONFIGS = {
+interface PanelConfig {
+  id: string;
+  icon: string;
+  title: string;
+}
+
+interface PanelConfigs {
+  QUESTIONS: PanelConfig;
+  VOTING: PanelConfig;
+  SNAPSHOTS: PanelConfig;
+}
+
+export const PANEL_CONFIGS: PanelConfigs = {
   // 질문 및 답변을 관리하는 패널
   QUESTIONS: {
     id: "comments",
@@ -21,7 +33,16 @@ export const PANEL_CONFIGS = {
   },
 };
 
-export const INITIAL_WIDTHS = {
+interface InitialWidths {
+  LEFT: number;
+  RIGHT: number;
+  MIN_LEFT: number;
+  MIN_RIGHT: number;
+  MAX_LEFT_RATIO: number;
+  MAX_RIGHT_RATIO: number;
+}
+
+export const INITIAL_WIDTHS: InitialWidths = {
   // 사이드바 너비 설정
   LEFT: 400, // 좌측 사이드바 기본 너비
   RIGHT: 500, // 우측 사이드바 기본 너비

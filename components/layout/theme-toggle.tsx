@@ -11,7 +11,7 @@ export default function ThemeToggle() {
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (): void => {
     if (document.documentElement.classList.contains("dark")) {
       document.documentElement.classList.remove("dark");
       localStorage.theme = "light";

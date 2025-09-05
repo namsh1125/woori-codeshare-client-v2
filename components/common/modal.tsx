@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import React, { useEffect, ReactNode } from "react";
+
+interface ModalProps {
+  isOpen: boolean; // 모달 표시 여부
+  onClose: () => void; // 모달 닫기 함수
+  children: ReactNode; // 모달 내부 컨텐츠
+  allowBackdropClose?: boolean; // 백드롭 클릭 시 닫기 허용 여부
+  closeButton?: boolean; // 닫기 버튼 표시 여부
+  preventEscClose?: boolean; // ESC 키로 닫기 방지 여부
+}
 
 /**
  * 모달 창을 표시하는 컴포넌트
- * @param {object} props
- * @param {boolean} props.isOpen - 모달 표시 여부
- * @param {Function} props.onClose - 모달 닫기 함수
- * @param {ReactNode} props.children - 모달 내부 컨텐츠
- * @param {boolean} props.allowBackdropClose - 백드롭 클릭 시 닫기 허용 여부
- * @param {boolean} props.closeButton - 닫기 버튼 표시 여부
- * @param {boolean} props.preventEscClose - ESC 키로 닫기 방지 여부
- * @returns
  */
 export default function Modal({
   isOpen,
@@ -18,10 +19,10 @@ export default function Modal({
   allowBackdropClose = true,
   closeButton = true,
   preventEscClose = false,
-}) {
+}: ModalProps) {
   // ESC 키를 눌렀을 때 모달을 닫는 이벤트 핸들러 등록
   useEffect(() => {
-    const handleEsc = (e) => {
+    const handleEsc = (e: KeyboardEvent): void => {
       if (e.key === "Escape" && !preventEscClose) {
         onClose();
       }
@@ -42,7 +43,7 @@ export default function Modal({
   if (!isOpen) return null;
 
   // 모달 외부 영역(백드롭) 클릭 시 모달 닫기
-  const handleBackdropClick = (e) => {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (allowBackdropClose && e.target === e.currentTarget) {
       onClose();
     }
