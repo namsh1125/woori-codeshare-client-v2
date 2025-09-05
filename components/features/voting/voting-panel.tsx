@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { FaVoteYea } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { VoteType } from "@/types/vote.type";
 
 const VOTE_TYPES = {
   POSITIVE: {
@@ -40,14 +41,19 @@ const VOTE_TYPES = {
   },
 };
 
-const getStorageKey = (roomId, snapshotId) => `vote_${roomId}_${snapshotId}`;
+const getStorageKey = (roomId: string | number, snapshotId: string | number): string => `vote_${roomId}_${snapshotId}`;
 
 // 학습 내용 이해도를 체크하기 위한 투표 패널 컴포넌트
-export default function VotingPanel({ roomId, snapshotId }) {
-  const [loading, setLoading] = useState(false);
-  const [userVote, setUserVote] = useState(null);
-  const [voteResults, setVoteResults] = useState(null);
-  const [selectedVote, setSelectedVote] = useState(null);
+interface VotingPanelProps {
+  roomId: string | number;
+  snapshotId: string | number;
+}
+
+export default function VotingPanel({ roomId, snapshotId }: VotingPanelProps) {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userVote, setUserVote] = useState<VoteType | null>(null);
+  const [voteResults, setVoteResults] = useState<Record<string, number> | null>(null);
+  const [selectedVote, setSelectedVote] = useState<VoteType | null>(null);
 
   // snapshotId가 변경될 때마다 상태 초기화
   useEffect(() => {
@@ -156,11 +162,11 @@ export default function VotingPanel({ roomId, snapshotId }) {
 
   // 전체 투표 수 계산
   const totalVotes = voteResults
-    ? Object.values(voteResults).reduce((a, b) => a + b, 0)
+    ? Object.values(voteResults).reduce((a: number, b: number) => a + b, 0)
     : 0;
 
   // 투표 비율 계산 함수
-  const getVotePercentage = (count) => {
+  const getVotePercentage = (count: number): number => {
     if (!totalVotes) return 0;
     return Math.round((count / totalVotes) * 100);
   };
@@ -200,7 +206,7 @@ export default function VotingPanel({ roomId, snapshotId }) {
             <button
               key={type}
               onClick={() => handleVoteClick(type)}
-              disabled={loading || userVote}
+              disabled={loading || !!userVote}
               className={`p-3 rounded-lg transition-colors text-left
                 ${config.styles.bg} ${config.styles.hover} border ${
                 config.styles.border

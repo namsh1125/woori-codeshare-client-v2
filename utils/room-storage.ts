@@ -1,7 +1,7 @@
 /**
  * 방 정보 인터페이스
  */
-interface RoomInfo {
+export interface RoomInfo {
   uuid: string;
   roomId: number;
   title: string;

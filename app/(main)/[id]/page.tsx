@@ -6,7 +6,7 @@ import { INITIAL_CODE } from "@/constants/initial-data";
 import { INITIAL_WIDTHS, PANEL_CONFIGS } from "@/constants/panel-config";
 import CodeEditorLayout from "@/components/layout/code-editor-layout";
 import RoomEnterModal from "@/components/features/room/room-enter-modal";
-import { RoomStorage } from "@/utils/room-storage";
+import { RoomStorage, type RoomInfo } from "@/utils/room-storage";
 import { useWebSocket } from "@/contexts/websocket-context";
 import { toast } from "react-toastify";
 import { sanitizeCode, desanitizeCode } from "@/utils/code-formatter";
@@ -17,13 +17,14 @@ import { sanitizeCode, desanitizeCode } from "@/utils/code-formatter";
  */
 export default function CodeShareRoomPage() {
   const router = useRouter();
-  const { id } = useParams();
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : params.id?.[0] || '';
   const { client, connected } = useWebSocket();
 
   // Room state
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [showEnterModal, setShowEnterModal] = useState<boolean>(false);
-  const [roomInfo, setRoomInfo] = useState<any>(null);
+  const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
 
   // Editor state
   const [code, setCode] = useState<string>(desanitizeCode(INITIAL_CODE));
@@ -374,7 +375,7 @@ export default function CodeShareRoomPage() {
         return;
       }
 
-      const roomInfo = {
+      const roomInfo: RoomInfo = {
         uuid: id,
         roomId: data.data.roomId,
         title: data.data.title,

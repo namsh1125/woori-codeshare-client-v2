@@ -105,8 +105,6 @@ export default function MockCodeEditorLayout() {
                   setIsDark(isDarkMode);
                   editor.updateOptions({
                     theme: isDarkMode ? "vs-dark" : "vs",
-                    foreground: isDarkMode ? "#E4E4E7" : "#1F2937",
-                    background: isDarkMode ? "#18181B" : "#FFFFFF",
                   });
                 }}
                 className={`rounded-lg border ${
