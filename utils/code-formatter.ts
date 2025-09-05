@@ -3,7 +3,7 @@
  * @param {string} code - 정리할 코드 문자열
  * @returns {string} 정리된 코드 문자열
  */
-export const sanitizeCode = (code) => {
+export const sanitizeCode = (code: string): string => {
   if (!code) return "";
 
   return code
@@ -19,7 +19,7 @@ export const sanitizeCode = (code) => {
  * @param {string} code - 복원할 코드 문자열
  * @returns {string} 복원된 코드 문자열
  */
-export const desanitizeCode = (code) => {
+export const desanitizeCode = (code: string): string => {
   if (!code) return "";
 
   return code
