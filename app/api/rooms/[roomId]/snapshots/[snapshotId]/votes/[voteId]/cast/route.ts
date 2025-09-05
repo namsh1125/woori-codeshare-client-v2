@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { VoteType, VoteRequestDTO, VoteResponseDTO } from "@/types/vote.type";
 
 interface VoteParams {
-  params: {
+  params: Promise<{
     roomId: string;
     snapshotId: string;
     voteId: string;
-  };
+  }>;
 }
 
 /**

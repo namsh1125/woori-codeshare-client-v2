@@ -3,13 +3,17 @@
 import { useState, useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { INITIAL_CODE } from "@/constants/initial-data";
-import { INITIAL_WIDTHS, PANEL_CONFIGS } from "@/constants/panel-config";
+import { INITIAL_WIDTHS } from "@/constants/panel-config";
 import CodeEditorLayout from "@/components/layout/code-editor-layout";
 import RoomEnterModal from "@/components/features/room/room-enter-modal";
 import { RoomStorage, type RoomInfo } from "@/utils/room-storage";
 import { useWebSocketManager } from "@/hooks/useWebSocketManager";
 import { toast } from "react-toastify";
 import { sanitizeCode, desanitizeCode } from "@/utils/code-formatter";
+import { RoomProvider } from "@/contexts/room-context";
+import { EditorProvider } from "@/contexts/editor-context";
+import { SnapshotProvider } from "@/contexts/snapshot-context";
+import { LayoutProvider } from "@/contexts/layout-context";
 
 /**
  * 코드 공유 방 페이지
@@ -49,8 +53,7 @@ export default function CodeShareRoomPage() {
       const hasAccess = RoomStorage.hasAccess(id);
       setIsAuthorized(hasAccess);
 
-      if (hasAccess) {
-        // 이미 인증된 사용자인 경우
+      if (hasAccess) { // 유효한 스냅샷 ID가 있는지 확인
         toast.success("방에 입장하는데 성공하였습니다.");
       } else {
         setShowEnterModal(true);
@@ -255,13 +258,9 @@ export default function CodeShareRoomPage() {
     });
   }, []);
 
-  const handleVoteUpdate = useCallback(
-    () => {
-      // 투표 결과가 업데이트되면 스냅샷을 새로고침
-      fetchSnapshots();
-    },
-    [fetchSnapshots]
-  );
+  const handleVoteUpdate = useCallback(() => {
+    fetchSnapshots(); // 투표 결과가 업데이트되면 스냅샷을 새로고침
+  }, [fetchSnapshots]);
 
   // 웹소켓 관리
   const { publishCode } = useWebSocketManager({
@@ -384,29 +383,37 @@ export default function CodeShareRoomPage() {
 
   return (
     <>
-      <CodeEditorLayout
-        code={displayCode}
-        onCodeChange={handleCodeChange}
-        isDisabled={!isAuthorized}
-        onCreateSnapshot={createSnapshot}
-        isSidebarOpen={isSidebarOpen}
-        onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        isReadOnly={isReadOnly}
-        leftWidth={leftWidth}
-        rightWidth={rightWidth}
-        onLeftResize={handleLeftResize}
-        onRightResize={handleRightResize}
-        activePanel={activePanel}
-        onPanelChange={togglePanel}
-        snapshots={snapshots}
-        currentVersion={currentVersion}
-        onVersionChange={handleVersionChange}
-        roomUuid={roomInfo?.uuid}
-        roomId={roomInfo?.roomId}
-        snapshotId={
-          currentVersion !== null ? snapshots[currentVersion]?.id : null
-        }
-      />
+      <RoomProvider roomInfo={roomInfo} isAuthorized={isAuthorized}>
+        <EditorProvider
+          liveCode={liveCode}
+          snapshotCode={snapshotCode}
+          displayCode={displayCode}
+          isReadOnly={isReadOnly}
+          isDisabled={!isAuthorized}
+          onCodeChange={handleCodeChange}
+          onCreateSnapshot={createSnapshot}
+        >
+          <SnapshotProvider
+            snapshots={snapshots}
+            currentVersion={currentVersion}
+            onVersionChange={handleVersionChange}
+            fetchSnapshots={fetchSnapshots}
+          >
+            <LayoutProvider
+              isSidebarOpen={isSidebarOpen}
+              activePanel={activePanel}
+              leftWidth={leftWidth}
+              rightWidth={rightWidth}
+              onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+              onPanelChange={togglePanel}
+              onLeftResize={handleLeftResize}
+              onRightResize={handleRightResize}
+            >
+              <CodeEditorLayout />
+            </LayoutProvider>
+          </SnapshotProvider>
+        </EditorProvider>
+      </RoomProvider>
 
       <RoomEnterModal
         isOpen={showEnterModal}

@@ -4,19 +4,13 @@ import { FaHistory } from "react-icons/fa";
 import SnapshotItem from "./snapshot-item";
 import LiveSessionButton from "./live-session-button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSnapshot } from "@/contexts/snapshot-context";
 
 /**
  * 코드 스냅샷 기록과 라이브 세션 선택을 관리하는 패널 컴포넌트
- * @param {Object} props
- * @param {Array} props.snapshots - 저장된 코드 스냅샷 배열
- * @param {number|null} props.currentVersion - 현재 선택된 스냅샷 인덱스 (null일 경우 라이브 세션)
- * @param {Function} props.setCurrentVersion - 버전 변경 상태 업데이트 함수
  */
-export default function VersionsPanel({
-  snapshots,
-  currentVersion,
-  setCurrentVersion,
-}) {
+export default function VersionsPanel() {
+  const { snapshots, currentVersion, onVersionChange } = useSnapshot();
   const isLiveSessionActive = currentVersion === null;
 
   /**
@@ -24,14 +18,14 @@ export default function VersionsPanel({
    * @param {number} index - 사용자가 선택한 스냅샷 인덱스
    */
   const switchToSnapshot = (index) => {
-    setCurrentVersion(index);
+    onVersionChange(index);
   };
 
   /**
    * 라이브 코딩 세션으로 전환
    */
   const switchToLiveSession = () => {
-    setCurrentVersion(null);
+    onVersionChange(null);
   };
 
   return (

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { EnterRoomResponseDTO } from "@/types/room.type";
 
 interface ParticipantParams {
-  params: {
+  params: Promise<{
     roomId: string;
-  };
+  }>;
 }
 
 /**

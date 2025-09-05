@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { UpdateCommentRequestDTO, UpdateCommentResponseDTO } from "@/types/comment.type";
 
 interface CommentIdParams {
-  params: {
+  params: Promise<{
     roomId: string;
     snapshotId: string;
     commentId: string;
-  };
+  }>;
 }
 
 /**
@@ -62,7 +62,7 @@ export async function PATCH(
  * 댓글 삭제 요청
  */
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: CommentIdParams
 ) {
   try {

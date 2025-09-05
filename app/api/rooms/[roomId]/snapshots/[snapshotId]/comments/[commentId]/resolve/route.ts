@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { ResolveCommentRequestDTO, ResolveCommentResponseDTO } from "@/types/comment.type";
 
 interface ResolveParams {
-  params: {
+  params: Promise<{
     roomId: string;
     snapshotId: string;
     commentId: string;
-  };
+  }>;
 }
 
 /**

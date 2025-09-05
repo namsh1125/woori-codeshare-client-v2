@@ -81,12 +81,6 @@ export default function SnapshotEditor({
     return () => observer.disconnect();
   }, []);
 
-  // 타임스탬프 포맷팅
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return "";
-    const date = new Date(timestamp);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-  };
 
   return (
     <div className="flex flex-col h-full px-2 py-2">

@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { FaVoteYea } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { VoteType } from "@/types/vote.type";
+import { useRoom } from "@/contexts/room-context";
+import { useSnapshot } from "@/contexts/snapshot-context";
 
 const VOTE_TYPES = {
   POSITIVE: {
@@ -44,12 +46,10 @@ const VOTE_TYPES = {
 const getStorageKey = (roomId: string | number, snapshotId: string | number): string => `vote_${roomId}_${snapshotId}`;
 
 // 학습 내용 이해도를 체크하기 위한 투표 패널 컴포넌트
-interface VotingPanelProps {
-  roomId: string | number;
-  snapshotId: string | number;
-}
-
-export default function VotingPanel({ roomId, snapshotId }: VotingPanelProps) {
+export default function VotingPanel() {
+  const { roomId } = useRoom();
+  const { currentSnapshot } = useSnapshot();
+  const snapshotId = currentSnapshot?.id;
   const [loading, setLoading] = useState<boolean>(false);
   const [userVote, setUserVote] = useState<VoteType | null>(null);
   const [voteResults, setVoteResults] = useState<Record<string, number> | null>(null);
