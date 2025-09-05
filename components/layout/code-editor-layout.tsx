@@ -15,7 +15,7 @@ import { useLayout } from "@/contexts/layout-context";
  * 코드 에디터 레이아웃 컴포넌트
  */
 export default function CodeEditorLayout() {
-  const { displayCode, isReadOnly, onCodeChange, isDisabled, onCreateSnapshot } = useEditor();
+  const { displayCode, isReadOnly, onCodeChangeAction, isDisabled, onCreateSnapshotAction } = useEditor();
   const { currentVersion, currentSnapshot } = useSnapshot();
   const { 
     isSidebarOpen, 
@@ -42,9 +42,9 @@ export default function CodeEditorLayout() {
       return (
         <LiveSessionEditor
           code={displayCode}
-          onCodeChange={onCodeChange}
+          onCodeChangeAction={onCodeChangeAction}
           isDisabled={isDisabled}
-          onCreateSnapshot={onCreateSnapshot}
+          onCreateSnapshotAction={onCreateSnapshotAction}
           isSidebarOpen={isSidebarOpen}
           isRightPanelOpen={!!activePanel}
         />
