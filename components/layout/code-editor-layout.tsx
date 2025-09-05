@@ -1,12 +1,12 @@
 "use client";
 
 import { FaQuestion, FaVoteYea, FaHistory } from "react-icons/fa";
-import ResizeHandle from "@/components/common/resize-handle";
+import ResizeHandle from "@/components/ui/resize-handle";
 import VersionsPanel from "@/components/features/versions/versions-panel";
 import QuestionsPanel from "@/components/features/questions/questions-panel";
 import VotingPanel from "@/components/features/voting/voting-panel";
-import SnapshotEditor from "@/components/editor/snapshot-editor";
-import LiveSessionEditor from "@/components/editor/live-session-editor";
+import SnapshotEditor from "@/components/features/editor/snapshot-editor";
+import LiveSessionEditor from "@/components/features/editor/live-session-editor";
 import { useEditor } from "@/contexts/editor-context";
 import { useSnapshot } from "@/contexts/snapshot-context";
 import { useLayout } from "@/contexts/layout-context";

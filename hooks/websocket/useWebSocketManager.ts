@@ -1,16 +1,67 @@
 import { useEffect, useCallback } from "react";
 import { useWebSocket } from "@/contexts/websocket-context";
 import { toast } from "react-toastify";
+import { Client, IMessage } from "@stomp/stompjs";
+
+interface RoomInfo {
+  roomId: string | number;
+  uuid: string;
+}
+
+interface Snapshot {
+  snapshotId: string;
+  createdAt: string;
+  title: string;
+  description: string;
+  code: string;
+  comments: any[];
+}
+
+interface SnapshotData {
+  snapshot: Snapshot;
+  roomId: string;
+}
+
+interface CommentData {
+  snapshotId: string;
+  eventType: string;
+  [key: string]: any;
+}
+
+interface CodeData {
+  eventType: string;
+  code: string;
+}
+
+interface UseWebSocketManagerProps {
+  roomInfo: RoomInfo | null;
+  isAuthorized: boolean;
+  onCodeUpdate: (code: string) => void;
+  onSnapshotUpdate: (snapshot: {
+    id: string;
+    createdAt: Date;
+    title: string;
+    description: string;
+    code: string;
+    comments: any[];
+  }) => void;
+  onCommentUpdate: (data: CommentData) => void;
+  onVoteUpdate: (data: any) => void;
+}
 
 /**
  * 웹소켓 구독을 관리하는 커스텀 훅
  */
-const useSubscription = (client, destination, callback) => {
+const useSubscription = <T>(
+  client: Client | null,
+  destination: string | null,
+  callback: (data: T) => void
+) => {
   useEffect(() => {
     if (!client || !destination) return;
 
     console.log(`구독 시작: ${destination}`);
-    const subscription = client.subscribe(destination, (message) => {
+    const subscription = client.subscribe(destination, (message: IMessage) => {
       try {
         const data = JSON.parse(message.body);
         callback(data);
@@ -37,7 +88,7 @@ export const useWebSocketManager = ({
   onSnapshotUpdate,
   onCommentUpdate,
   onVoteUpdate,
-}) => {
+}: UseWebSocketManagerProps) => {
   const { client, connected } = useWebSocket();
   const isReady = client && connected && roomInfo?.roomId && isAuthorized;
 
@@ -54,7 +105,7 @@ export const useWebSocketManager = ({
   const voteDestination = isReady ? `/topic/room/${roomInfo.uuid}/votes` : null;
 
   // 코드 업데이트 구독
-  useSubscription(
+  useSubscription<CodeData>(
     client,
     codeDestination,
     useCallback(
@@ -70,7 +121,7 @@ export const useWebSocketManager = ({
   );
 
   // 스냅샷 업데이트 구독
-  useSubscription(
+  useSubscription<SnapshotData>(
     client,
     snapshotDestination,
     useCallback(
@@ -116,7 +167,7 @@ export const useWebSocketManager = ({
   );
 
   // 댓글 업데이트 구독
-  useSubscription(
+  useSubscription<CommentData>(
     client,
     commentDestination,
     useCallback(
@@ -126,7 +177,7 @@ export const useWebSocketManager = ({
           onCommentUpdate(data);
 
           // 이벤트 타입별 토스트 메시지
-          const toastMessages = {
+          const toastMessages: Record<string, string> = {
             COMMENT_CREATED: "새로운 질문이 등록되었습니다.",
             REPLY_CREATED: "새로운 답변이 등록되었습니다.",
             COMMENT_UPDATED: "댓글이 수정되었습니다.",
@@ -148,7 +199,7 @@ export const useWebSocketManager = ({
   );
 
   // 투표 업데이트 구독
-  useSubscription(
+  useSubscription<any>(
     client,
     voteDestination,
     useCallback(
@@ -167,7 +218,7 @@ export const useWebSocketManager = ({
 
   // 코드 발송 함수
   const publishCode = useCallback(
-    (newCode) => {
+    (newCode: string) => {
       if (!isReady || !roomInfo?.roomId) {
         console.log("코드 업데이트 전송 불가:", {
           client: !!client,
@@ -187,7 +238,7 @@ export const useWebSocketManager = ({
         client.publish({
           destination: "/app/update.code",
           body: JSON.stringify({
-            roomId: parseInt(roomInfo.roomId, 10),
+            roomId: typeof roomInfo.roomId === 'string' ? parseInt(roomInfo.roomId, 10) : roomInfo.roomId,
             code: newCode,
           }),
         });

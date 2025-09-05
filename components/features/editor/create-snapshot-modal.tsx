@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../common/modal";
+import Modal from "@/components/ui/modal";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import TextArea from "@/components/ui/textarea";

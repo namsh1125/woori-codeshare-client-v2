@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import RoomCreateModal from "@/components/features/room/room-create-modal";
-import { RoomStorage } from "@/utils/room-storage";
+import { RoomStorage } from "@/utils/roomStorage";
 import MockCodeEditorLayout from "@/components/layout/mock-code-editor-layout";
 
 /**

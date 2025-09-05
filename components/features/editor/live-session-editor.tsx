@@ -3,11 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { FaCode, FaCopy, FaCamera, FaCheck, FaEraser } from "react-icons/fa";
 import CreateSnapshotModal from "./create-snapshot-modal";
-import { detectLanguage } from "@/utils/detect-language";
+import { detectLanguage } from "@/utils/detectLanguage";
 import MonacoEditor from "./monaco-editor";
 import { INITIAL_CODE } from "@/constants/initial-data";
 import { LiveSessionEditorProps, SnapshotData } from "@/types/editor.type";
-import { useThemeDetector } from "@/hooks/use-theme-detector";
+import { useThemeDetector } from "@/hooks/theme/useThemeDetector";
 
 /**
  * 실시간 세션용 코드 에디터 컴포넌트
