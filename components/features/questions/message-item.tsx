@@ -11,6 +11,7 @@ import {
 import { formatRelativeTime } from "@/utils/formatters";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { TIMERS } from "@/constants/ui.constants";
 
 /**
  * 개별 질문/답변 메시지를 표시하는 컴포넌트
@@ -48,10 +49,10 @@ export default function MessageItem({
     setFormattedTime(formatRelativeTime(timestamp));
   }, [message?.createdAt]);
 
-  // 주기적으로 시간 형식 업데이트 (30초 간격)
+  // 주기적으로 시간 형식 업데이트
   useEffect(() => {
     updateTime();
-    const timer = setInterval(updateTime, 30000);
+    const timer = setInterval(updateTime, TIMERS.MESSAGE_UPDATE_INTERVAL);
     return () => clearInterval(timer);
   }, [updateTime]);
 
