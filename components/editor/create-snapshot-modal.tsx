@@ -1,5 +1,9 @@
 import { useState } from "react";
 import Modal from "../common/modal";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import TextArea from "@/components/ui/textarea";
+import FormField from "@/components/ui/form-field";
 
 const MAX_TITLE_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 255;
@@ -80,91 +84,61 @@ export default function CreateSnapshotModal({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 제목 입력 필드 */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Title
-            </label>
-            <span className="text-xs text-gray-400">
-              {title.length}/{MAX_TITLE_LENGTH}
-            </span>
-          </div>
-          <input
+        <FormField
+          label="Title"
+          error={titleError}
+          showCharCount
+          currentLength={title.length}
+          maxLength={MAX_TITLE_LENGTH}
+          required
+        >
+          <Input
             type="text"
             value={title}
             onChange={handleTitleChange}
             maxLength={MAX_TITLE_LENGTH}
-            className="w-full px-3 py-2.5
-              bg-white dark:bg-gray-800 
-              border border-gray-300 dark:border-gray-700
-              text-gray-900 dark:text-gray-200
-              focus:ring-2 focus:ring-blue-500/20
-              focus:border-blue-500/50
-              rounded-lg transition-colors"
             placeholder="Enter snapshot title"
             required
             autoFocus
           />
-          {titleError && (
-            <p className="text-xs text-red-500 mt-1">{titleError}</p>
-          )}
-        </div>
+        </FormField>
 
         {/* 설명 입력 필드 */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Description
-            </label>
-            <span className="text-xs text-gray-400">
-              {description.length}/{MAX_DESCRIPTION_LENGTH}
-            </span>
-          </div>
-          <textarea
+        <FormField
+          label="Description"
+          error={descriptionError}
+          showCharCount
+          currentLength={description.length}
+          maxLength={MAX_DESCRIPTION_LENGTH}
+        >
+          <TextArea
             value={description}
             onChange={handleDescriptionChange}
             maxLength={MAX_DESCRIPTION_LENGTH}
-            className="w-full px-3 py-2.5
-              bg-white dark:bg-gray-800
-              border border-gray-300 dark:border-gray-700
-              text-gray-900 dark:text-gray-200
-              focus:ring-2 focus:ring-blue-500/20
-              focus:border-blue-500/50
-              rounded-lg transition-colors
-              h-32 resize-none"
+            className="h-32"
             placeholder="Enter snapshot description"
           />
-          {descriptionError && (
-            <p className="text-xs text-red-500 mt-1">{descriptionError}</p>
-          )}
-        </div>
+        </FormField>
 
         {/* 버튼 그룹 */}
         <div className="flex justify-end gap-3 pt-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg
-              bg-gray-50 hover:bg-gray-100
-              dark:bg-gray-700/50 dark:hover:bg-gray-700
-              text-gray-700 dark:text-gray-300
-              border border-gray-200 dark:border-gray-600
-              transition-colors"
+            variant="secondary"
+            size="md"
           >
             Cancel
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="submit"
             disabled={!!titleError || !!descriptionError}
-            className="px-4 py-2 rounded-lg
-              bg-blue-500 hover:bg-blue-600
-              text-white
-              transition-colors
-              disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="primary"
+            size="md"
           >
             Create
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

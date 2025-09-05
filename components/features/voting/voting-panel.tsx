@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { VoteType } from "@/types/vote.type";
 import { useRoom } from "@/contexts/room-context";
 import { useSnapshot } from "@/contexts/snapshot-context";
+import Button from "@/components/ui/button";
 
 const VOTE_TYPES = {
   POSITIVE: {
@@ -235,24 +236,22 @@ export default function VotingPanel() {
                 선택: {VOTE_TYPES[selectedVote].text}
               </p>
               <div className="flex gap-3">
-                <button
+                <Button
                   onClick={() => setSelectedVote(null)}
                   disabled={loading}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 
-                    dark:text-gray-400 dark:hover:text-gray-200 transition-colors
-                    disabled:opacity-50"
+                  variant="ghost"
+                  size="sm"
                 >
                   취소
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleConfirmVote(selectedVote)}
                   disabled={loading}
-                  className={`px-4 py-2 text-sm rounded-md transition-colors
-                    ${VOTE_TYPES[selectedVote].styles.button}
-                    disabled:opacity-50`}
+                  variant="primary"
+                  size="sm"
                 >
                   투표하기
-                </button>
+                </Button>
               </div>
             </div>
           </div>
