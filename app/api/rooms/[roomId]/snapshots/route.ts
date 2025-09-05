@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { SnapshotResponseDTO, CreateSnapshotRequestDTO, CreateSnapshotResponseDTO } from "@/types/snapshot.type";
 
 interface GetSnapshotParams {
-  params: {
+  params: Promise<{
     roomId: string;
-  };
+  }>;
 }
 
 /**
  * 코드 스냅샷 조회 요청
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: GetSnapshotParams
 ) {
   try {

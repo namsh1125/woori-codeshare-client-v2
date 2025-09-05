@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { CommentResponseDTO, CreateCommentRequestDTO, CreateCommentResponseDTO } from "@/types/comment.type";
 
 interface CommentParams {
-  params: {
+  params: Promise<{
     roomId: string;
     snapshotId: string;
-  };
+  }>;
 }
 
 /**
  * 댓글 조회 요청
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: CommentParams
 ) {
   try {

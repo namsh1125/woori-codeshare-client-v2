@@ -18,7 +18,6 @@ export default function LiveSessionEditor({
   isDisabled,
   isSidebarOpen,
   isRightPanelOpen,
-  roomId,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);

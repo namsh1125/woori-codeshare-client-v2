@@ -7,58 +7,33 @@ import QuestionsPanel from "@/components/features/questions/questions-panel";
 import VotingPanel from "@/components/features/voting/voting-panel";
 import SnapshotEditor from "@/components/editor/snapshot-editor";
 import LiveSessionEditor from "@/components/editor/live-session-editor";
+import { useEditor } from "@/contexts/editor-context";
+import { useSnapshot } from "@/contexts/snapshot-context";
+import { useLayout } from "@/contexts/layout-context";
 
 /**
  * 코드 에디터 레이아웃 컴포넌트
- * @param {Object} props - 컴포넌트 props
- * @param {string} props.code - 현재 코드
- * @param {Function} props.onCodeChange - 코드 변경 핸들러
- * @param {boolean} props.isDisabled - 에디터 비활성화 여부
- * @param {Function} props.onCreateSnapshot - 스냅샷 생성 핸들러
- * @param {boolean} props.isSidebarOpen - 좌측 사이드바 열림 여부
- * @param {Function} props.onSidebarToggle - 사이드바 토글 핸들러
- * @param {boolean} props.isReadOnly - 읽기 전용 모드 여부
- * @param {number} props.leftWidth - 좌측 패널 너비
- * @param {number} props.rightWidth - 우측 패널 너비
- * @param {Function} props.onLeftResize - 좌측 패널 크기 조절 핸들러
- * @param {Function} props.onRightResize - 우측 패널 크기 조절 핸들러
- * @param {Array} props.snapshots - 코드 스냅샷 배열
- * @param {number|null} props.currentVersion - 현재 선택된 스냅샷 인덱스
- * @param {Function} props.onVersionChange - 버전 변경 핸들러
- * @param {string} props.activePanel - 활성화된 패널 ID
- * @param {Function} props.onPanelChange - 패널 변경 핸들러
- * @param {string} props.roomId - 방 ID
- * @param {string|null} props.snapshotId - 현재 선택된 스냅샷 ID
- * @param {string} props.roomUuid - 방 UUID
  */
-export default function CodeEditorLayout({
-  code,
-  onCodeChange,
-  isDisabled,
-  onCreateSnapshot,
-  isSidebarOpen,
-  onSidebarToggle,
-  isReadOnly,
-  leftWidth,
-  rightWidth,
-  onLeftResize,
-  onRightResize,
-  snapshots,
-  currentVersion,
-  onVersionChange,
-  activePanel,
-  onPanelChange,
-  roomId,
-  snapshotId,
-  roomUuid,
-}) {
+export default function CodeEditorLayout() {
+  const { displayCode, isReadOnly, onCodeChange, isDisabled, onCreateSnapshot } = useEditor();
+  const { currentVersion, currentSnapshot } = useSnapshot();
+  const { 
+    isSidebarOpen, 
+    activePanel, 
+    leftWidth, 
+    rightWidth,
+    onSidebarToggle,
+    onPanelChange,
+    onLeftResize,
+    onRightResize 
+  } = useLayout();
   const renderEditor = () => {
-    if (isReadOnly) {
+    if (isReadOnly && currentSnapshot) {
       return (
         <SnapshotEditor
-          code={code}
-          title={snapshots[currentVersion].title}
-          description={snapshots[currentVersion].description}
+          code={displayCode}
+          title={currentSnapshot.title}
+          description={currentSnapshot.description}
           isSidebarOpen={isSidebarOpen}
           isRightPanelOpen={!!activePanel}
         />
@@ -66,13 +41,12 @@ export default function CodeEditorLayout({
     } else {
       return (
         <LiveSessionEditor
-          code={code}
+          code={displayCode}
           onCodeChange={onCodeChange}
           isDisabled={isDisabled}
           onCreateSnapshot={onCreateSnapshot}
           isSidebarOpen={isSidebarOpen}
           isRightPanelOpen={!!activePanel}
-          roomId={roomId}
         />
       );
     }
@@ -81,15 +55,9 @@ export default function CodeEditorLayout({
   const renderActivePanel = () => {
     switch (activePanel) {
       case "comments":
-        return (
-          <QuestionsPanel
-            roomId={roomId}
-            snapshotId={snapshotId}
-            snapshots={snapshots}
-          />
-        );
+        return <QuestionsPanel />;
       case "voting":
-        return <VotingPanel roomId={roomId} snapshotId={snapshotId} />;
+        return <VotingPanel />;
       default:
         return null;
     }
@@ -134,11 +102,7 @@ export default function CodeEditorLayout({
           ${isSidebarOpen ? "w-[calc(100%-3rem)]" : "w-0 overflow-hidden"}
         `}
         >
-          <VersionsPanel
-            snapshots={snapshots}
-            currentVersion={currentVersion}
-            setCurrentVersion={onVersionChange}
-          />
+          <VersionsPanel />
         </div>
 
         {/* 좌측 크기 조절 핸들 */}

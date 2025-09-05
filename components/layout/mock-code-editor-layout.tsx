@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import { FaCode, FaHistory, FaQuestion, FaVoteYea } from "react-icons/fa";
 import { INITIAL_CODE } from "@/constants/initial-data";
@@ -98,7 +98,7 @@ export default function MockCodeEditorLayout() {
                   automaticLayout: true,
                   fontFamily: "Monaco, 'Courier New', monospace",
                 }}
-                onMount={(editor, monaco) => {
+                onMount={(editor) => {
                   editorRef.current = editor;
                   const isDarkMode =
                     document.documentElement.classList.contains("dark");

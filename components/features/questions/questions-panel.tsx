@@ -4,18 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { FaQuestion, FaPaperPlane } from "react-icons/fa";
 import { toast } from "react-toastify";
 import MessageItem from "./message-item";
+import { useRoom } from "@/contexts/room-context";
+import { useSnapshot } from "@/contexts/snapshot-context";
 
 /**
  * 질문과 답변을 관리하는 패널 컴포넌트
- * @param {string} roomId - 현재 룸의 고유 식별자
- * @param {string} snapshotId - 현재 스냅샷의 고유 식별자
- * @param {Array} snapshots - 전체 스냅샷 목록
  */
-export default function QuestionsPanel({
-  roomId,
-  snapshotId,
-  snapshots
-}) {
+export default function QuestionsPanel() {
+  const { roomId } = useRoom();
+  const { snapshots, currentSnapshot } = useSnapshot();
+  const snapshotId = currentSnapshot?.id;
   // 사용자 입력 질문을 관리하는 상태
   const [newQuestion, setNewQuestion] = useState("");
 
@@ -269,8 +267,8 @@ export default function QuestionsPanel({
 
       // 스냅샷 업데이트 - comments가 없는 경우 처리
       if (snapshots) {
-        const updatedSnapshots = snapshots.map((snapshot) => {
-          if (snapshot.id === parseInt(snapshotId)) {
+        snapshots.map((snapshot) => {
+          if (snapshot.id === snapshotId) {
             const updatedComments = snapshot.comments
               ? snapshot.comments.map((comment) =>
                   comment.commentId === commentId
@@ -320,8 +318,8 @@ export default function QuestionsPanel({
       setMessages((prev) => prev.filter((msg) => msg.commentId !== commentId));
 
       // 스냅샷 상태 업데이트
-      const updatedSnapshots = snapshots.map((snapshot) => {
-        if (snapshot.id === parseInt(snapshotId)) {
+      snapshots.map((snapshot) => {
+        if (snapshot.id === snapshotId) {
           return {
             ...snapshot,
             comments: snapshot.comments.filter(
@@ -373,8 +371,8 @@ export default function QuestionsPanel({
       );
 
       // 스냅샷 상태 업데이트
-      const updatedSnapshots = snapshots.map((snapshot) => {
-        if (snapshot.id === parseInt(snapshotId)) {
+      snapshots.map((snapshot) => {
+        if (snapshot.id === snapshotId) {
           return {
             ...snapshot,
             comments: snapshot.comments.map((comment) =>

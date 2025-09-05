@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { VoteResultResponseDTO } from "@/types/vote.type";
 
 interface VoteResultParams {
-  params: {
+  params: Promise<{
     roomId: string;
     snapshotId: string;
     voteId: string;
-  };
+  }>;
 }
 
 /**
  * 투표 결과 조회 요청
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: VoteResultParams
 ) {
   try {
