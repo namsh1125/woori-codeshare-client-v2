@@ -3,7 +3,7 @@
  * @param {number} timestamp - 변환할 타임스탬프
  * @returns {string} 형식: 'YYYY-MM-DD HH:mm' 형태의 문자열
  */
-export const formatTime = (timestamp) => {
+export const formatTime = (timestamp: number): string => {
   const date = new Date(timestamp);
   const dateStr = date.toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -23,7 +23,7 @@ export const formatTime = (timestamp) => {
  * @param {Date} timestamp - 포맷팅할 시간
  * @returns {string} 포맷팅된 시간 문자열
  */
-export const formatRelativeTime = (timestamp) => {
+export const formatRelativeTime = (timestamp: Date | string | number): string => {
   if (!timestamp) return "";
 
   // timestamp를 숫자로 변환
@@ -46,7 +46,7 @@ export const formatRelativeTime = (timestamp) => {
  * @param {number} maxLength - 최대 길이 (기본값: 50)
  * @returns {string} 처리된 텍스트
  */
-export const truncateText = (text, maxLength = 50) => {
+export const truncateText = (text: string, maxLength: number = 50): string => {
   if (!text) return "";
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
