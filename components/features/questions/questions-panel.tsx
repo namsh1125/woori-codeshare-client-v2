@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import MessageItem from "./message-item";
 import { useRoom } from "@/contexts/room-context";
 import { useSnapshot } from "@/contexts/snapshot-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
 
 /**
  * 질문과 답변을 관리하는 패널 컴포넌트
@@ -450,32 +452,24 @@ export default function QuestionsPanel() {
       {/* 입력 폼 */}
       <div className="mt-4 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
         <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={newQuestion}
             onChange={(e) => setNewQuestion(e.target.value)}
             placeholder="Ask a question..."
-            className="flex-1 px-3 py-2 rounded-lg text-sm border transition-colors
-              bg-white dark:bg-gray-700/50 
-              border-gray-200 dark:border-gray-600 
-              text-gray-900 dark:text-gray-200 
-              focus:border-blue-400 dark:focus:border-blue-500/50"
+            className="flex-1 text-sm"
+            fullWidth={false}
           />
-          <button
+          <Button
             type="submit"
-            className={`
-              p-2 rounded-lg transition-colors
-              ${
-                newQuestion.trim()
-                  ? "bg-blue-50 dark:bg-blue-500/20 text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/30"
-                  : "opacity-50 cursor-not-allowed"
-              }
-            `}
+            variant="primary"
+            size="sm"
             disabled={!newQuestion.trim()}
             title="Send question"
+            className="!p-2"
           >
             <FaPaperPlane size={16} />
-          </button>
+          </Button>
         </form>
       </div>
     </div>
