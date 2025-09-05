@@ -14,6 +14,7 @@ import { RoomProvider } from "@/contexts/room-context";
 import { EditorProvider } from "@/contexts/editor-context";
 import { SnapshotProvider } from "@/contexts/snapshot-context";
 import { LayoutProvider } from "@/contexts/layout-context";
+import { SnapshotData } from "@/types/editor.type";
 
 /**
  * 코드 공유 방 페이지
@@ -327,7 +328,7 @@ export default function CodeShareRoomPage() {
   /**
    * 새로운 스냅샷 생성
    */
-  const createSnapshot = async (snapshotData: { title: string; description: string }): Promise<void> => {
+  const createSnapshot = async (snapshotData: SnapshotData): Promise<void> => {
     if (!liveCode) return; // 라이브 코드가 있어야 스냅샷 생성 가능
 
     const room = RoomStorage.getRoom(id);
@@ -390,8 +391,8 @@ export default function CodeShareRoomPage() {
           displayCode={displayCode}
           isReadOnly={isReadOnly}
           isDisabled={!isAuthorized}
-          onCodeChange={handleCodeChange}
-          onCreateSnapshot={createSnapshot}
+          onCodeChangeAction={handleCodeChange}
+          onCreateSnapshotAction={createSnapshot}
         >
           <SnapshotProvider
             snapshots={snapshots}

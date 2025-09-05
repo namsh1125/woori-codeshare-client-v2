@@ -4,56 +4,49 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { FaCode, FaCopy, FaCamera, FaCheck, FaEraser } from "react-icons/fa";
 import CreateSnapshotModal from "./create-snapshot-modal";
 import { detectLanguage } from "@/utils/detect-language";
-import "../../styles/editor-theme.css";
-import { DarkWriteableEditor, LightWriteableEditor } from "./variants";
+import MonacoEditor from "./monaco-editor";
 import { INITIAL_CODE } from "@/constants/initial-data";
+import { LiveSessionEditorProps, SnapshotData } from "@/types/editor.type";
+import { useThemeDetector } from "@/hooks/use-theme-detector";
 
 /**
  * 실시간 세션용 코드 에디터 컴포넌트
  */
 export default function LiveSessionEditor({
   code,
-  onCodeChange,
-  onCreateSnapshot,
-  isDisabled,
-  isSidebarOpen,
-  isRightPanelOpen,
-}) {
+  onCodeChangeAction,
+  onCreateSnapshotAction,
+  isDisabled = false,
+  isSidebarOpen = false,
+  isRightPanelOpen = false,
+}: LiveSessionEditorProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [detectedLanguage, setDetectedLanguage] = useState("javascript");
-  const [isDark, setIsDark] = useState(false);
+  const isDark = useThemeDetector();
   const editorRef = useRef(null);
 
-  /**
-   * 디바운스 함수 구현
-   */
-  function debounce(func, wait) {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
+  // 디바운스를 위한 타이머 ref
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // 언어 감지 함수를 컴포넌트 내부에서 디바운스 처리
-  const debouncedDetectLanguage = useCallback(
-      debounce((newCode) => {
-        const detected = detectLanguage(newCode);
-        if (detected !== detectedLanguage) {
-          setDetectedLanguage(detected);
-        }
-      }, 300),
-      [detectedLanguage]
-  );
+  const debouncedDetectLanguage = useCallback((newCode: string) => {
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      const detected = detectLanguage(newCode);
+      if (detected !== detectedLanguage) {
+        setDetectedLanguage(detected);
+      }
+    }, 300);
+  }, [detectedLanguage]);
 
   // 코드 변경 핸들러
   const handleCodeChange = useCallback(
-      (newCode) => {
+      (newCode: string | undefined) => {
         if (newCode === code) return; // 같은 코드면 무시
-        onCodeChange(newCode);
+        onCodeChangeAction(newCode);
       },
-      [code, onCodeChange]
+      [code, onCodeChangeAction]
   );
 
   // 초기 언어 감지 및 코드 변경 시 언어 감지
@@ -67,7 +60,7 @@ export default function LiveSessionEditor({
    * 키보드 단축키 이벤트 핸들러 등록
    */
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "s" && !isDisabled) {
         e.preventDefault(); // 브라우저 기본 저장 동작 방지
         setIsModalOpen(true);
@@ -81,8 +74,8 @@ export default function LiveSessionEditor({
   /**
    * 스냅샷 생성 처리
    */
-  const handleCreateSnapshot = (snapshotData) => {
-    onCreateSnapshot(snapshotData);
+  const handleCreateSnapshot = (snapshotData: SnapshotData) => {
+    onCreateSnapshotAction(snapshotData);
   };
 
   /**
@@ -112,37 +105,6 @@ export default function LiveSessionEditor({
     }
   }, [isSidebarOpen, isRightPanelOpen]);
 
-  // 다크모드 감지 및 업데이트
-  useEffect(() => {
-    const updateTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains("dark");
-      setIsDark(isDarkMode);
-      if (editorRef.current) {
-        editorRef.current.updateOptions({
-          theme: isDarkMode ? "vs-dark" : "vs",
-        });
-      }
-    };
-
-    // 초기 테마 설정
-    updateTheme();
-
-    // MutationObserver로 html 클래스 변경 감지
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === "class") {
-          updateTheme();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <div className="flex flex-col h-full px-2 py-2">
@@ -203,19 +165,13 @@ export default function LiveSessionEditor({
 
       {/* Monaco 에디터 영역 */}
       <div className="flex-1 relative">
-        {isDark ? (
-          <DarkWriteableEditor
-            code={code}
-            onChange={handleCodeChange}
-            language={detectedLanguage}
-          />
-        ) : (
-          <LightWriteableEditor
-            code={code}
-            onChange={handleCodeChange}
-            language={detectedLanguage}
-          />
-        )}
+        <MonacoEditor
+          code={code}
+          onChangeAction={handleCodeChange}
+          language={detectedLanguage}
+          isDark={isDark}
+          isReadOnly={false}
+        />
       </div>
 
       {/* 스냅샷 생성 모달 */}

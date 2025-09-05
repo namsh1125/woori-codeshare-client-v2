@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { FaHistory, FaCopy, FaCheck, FaInfoCircle } from "react-icons/fa";
 import { detectLanguage } from "@/utils/detect-language";
-import "../../styles/editor-theme.css";
-import { DarkReadonlyEditor, LightReadonlyEditor } from "./variants";
+import MonacoEditor from "./monaco-editor";
+import { SnapshotEditorProps } from "@/types/editor.type";
+import { useThemeDetector } from "@/hooks/use-theme-detector";
 
 /**
  * 스냅샷 전용 코드 에디터 컴포넌트 (읽기 전용)
@@ -13,12 +14,12 @@ export default function SnapshotEditor({
   code,
   title,
   description,
-  isSidebarOpen,
-  isRightPanelOpen,
-}) {
+  isSidebarOpen = false,
+  isRightPanelOpen = false,
+}: SnapshotEditorProps) {
   const [copied, setCopied] = useState(false);
   const [detectedLanguage, setDetectedLanguage] = useState("javascript");
-  const [isDark, setIsDark] = useState(false);
+  const isDark = useThemeDetector();
   const editorRef = useRef(null);
 
   // 초기 언어 감지
@@ -49,37 +50,6 @@ export default function SnapshotEditor({
     }
   }, [isSidebarOpen, isRightPanelOpen]);
 
-  // 다크모드 감지 및 업데이트
-  useEffect(() => {
-    const updateTheme = () => {
-      const isDarkMode = document.documentElement.classList.contains("dark");
-      setIsDark(isDarkMode);
-      if (editorRef.current) {
-        editorRef.current.updateOptions({
-          theme: isDarkMode ? "vs-dark" : "vs",
-        });
-      }
-    };
-
-    // 초기 테마 설정
-    updateTheme();
-
-    // MutationObserver로 html 클래스 변경 감지
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === "class") {
-          updateTheme();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
 
   return (
@@ -134,11 +104,12 @@ export default function SnapshotEditor({
 
       {/* Monaco 에디터 영역 */}
       <div className="flex-1 relative">
-        {isDark ? (
-          <DarkReadonlyEditor code={code} language={detectedLanguage} />
-        ) : (
-          <LightReadonlyEditor code={code} language={detectedLanguage} />
-        )}
+        <MonacoEditor
+          code={code}
+          language={detectedLanguage}
+          isDark={isDark}
+          isReadOnly={true}
+        />
       </div>
     </div>
   );

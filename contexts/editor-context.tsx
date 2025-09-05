@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
+import { SnapshotData } from "@/types/editor.type";
 
 interface EditorContextType {
   liveCode: string;
@@ -8,8 +9,8 @@ interface EditorContextType {
   displayCode: string;
   isReadOnly: boolean;
   isDisabled: boolean;
-  onCodeChange: (newCode: string) => void;
-  onCreateSnapshot: (data: { title: string; description: string }) => Promise<void>;
+  onCodeChangeAction: (newCode: string) => void;
+  onCreateSnapshotAction: (data: SnapshotData) => Promise<void>;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -21,8 +22,8 @@ export function EditorProvider({
   displayCode,
   isReadOnly,
   isDisabled,
-  onCodeChange,
-  onCreateSnapshot
+  onCodeChangeAction,
+  onCreateSnapshotAction
 }: { 
   children: ReactNode;
   liveCode: string;
@@ -30,8 +31,8 @@ export function EditorProvider({
   displayCode: string;
   isReadOnly: boolean;
   isDisabled: boolean;
-  onCodeChange: (newCode: string) => void;
-  onCreateSnapshot: (data: { title: string; description: string }) => Promise<void>;
+  onCodeChangeAction: (newCode: string) => void;
+  onCreateSnapshotAction: (data: SnapshotData) => Promise<void>;
 }) {
   const value: EditorContextType = {
     liveCode,
@@ -39,8 +40,8 @@ export function EditorProvider({
     displayCode,
     isReadOnly,
     isDisabled,
-    onCodeChange,
-    onCreateSnapshot,
+    onCodeChangeAction,
+    onCreateSnapshotAction,
   };
 
   return (
