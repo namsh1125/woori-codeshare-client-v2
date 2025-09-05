@@ -21,27 +21,27 @@ export default function CodeShareRoomPage() {
   const { client, connected } = useWebSocket();
 
   // Room state
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [showEnterModal, setShowEnterModal] = useState(false);
-  const [roomInfo, setRoomInfo] = useState(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [showEnterModal, setShowEnterModal] = useState<boolean>(false);
+  const [roomInfo, setRoomInfo] = useState<any>(null);
 
   // Editor state
-  const [code, setCode] = useState(desanitizeCode(INITIAL_CODE));
-  const [snapshots, setSnapshots] = useState([]);
-  const [currentVersion, setCurrentVersion] = useState(null);
+  const [code, setCode] = useState<string>(desanitizeCode(INITIAL_CODE));
+  const [snapshots, setSnapshots] = useState<any[]>([]);
+  const [currentVersion, setCurrentVersion] = useState<number | null>(null);
 
   // Layout state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activePanel, setActivePanel] = useState(null);
-  const [leftWidth, setLeftWidth] = useState(INITIAL_WIDTHS.LEFT);
-  const [rightWidth, setRightWidth] = useState(INITIAL_WIDTHS.RIGHT);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [activePanel, setActivePanel] = useState<string | null>(null);
+  const [leftWidth, setLeftWidth] = useState<number>(INITIAL_WIDTHS.LEFT);
+  const [rightWidth, setRightWidth] = useState<number>(INITIAL_WIDTHS.RIGHT);
 
   // 스냅샷이 선택되었는지 여부로 readOnly 상태 결정
   const isReadOnly = currentVersion !== null;
 
   // 방 입장 권한 체크
   useEffect(() => {
-    const checkAccess = async () => {
+    const checkAccess = async (): Promise<void> => {
       const hasAccess = RoomStorage.hasAccess(id);
       setIsAuthorized(hasAccess);
 
@@ -65,7 +65,7 @@ export default function CodeShareRoomPage() {
   }, [id]);
 
   // 스냅샷을 서버에서 가져오는 함수
-  const fetchSnapshots = useCallback(async () => {
+  const fetchSnapshots = useCallback(async (): Promise<void> => {
     if (!roomInfo?.uuid || !isAuthorized) {
       return;
     }
@@ -358,7 +358,7 @@ export default function CodeShareRoomPage() {
   /**
    * 방 입장 처리
    */
-  const handleEnterRoom = async (password) => {
+  const handleEnterRoom = async (password: string): Promise<void> => {
     try {
       const response = await fetch(
         `/api/rooms/${id}/participants?password=${password}`,
@@ -395,7 +395,7 @@ export default function CodeShareRoomPage() {
   /**
    * 우측 패널(질문, 투표) 토글 처리
    */
-  const togglePanel = (panelName) => {
+  const togglePanel = (panelName: string): void => {
     // current session(currentVersion이 null)인 경우 패널을 열지 않음
     if (currentVersion === null) return;
 
@@ -405,7 +405,7 @@ export default function CodeShareRoomPage() {
   /**
    * 좌측 사이드바(스냅샷) 크기 조절
    */
-  const handleLeftResize = useCallback((delta) => {
+  const handleLeftResize = useCallback((delta: number): void => {
     setLeftWidth((prev) => {
       const newWidth = prev + delta;
       return Math.min(
@@ -418,7 +418,7 @@ export default function CodeShareRoomPage() {
   /**
    * 우측 패널 크기 조절
    */
-  const handleRightResize = useCallback((delta) => {
+  const handleRightResize = useCallback((delta: number): void => {
     setRightWidth((prev) => {
       const newWidth = prev + delta;
       return Math.min(
@@ -431,7 +431,7 @@ export default function CodeShareRoomPage() {
   /**
    * 새로운 스냅샷 생성
    */
-  const createSnapshot = async (snapshotData) => {
+  const createSnapshot = async (snapshotData: { title: string; description: string }): Promise<void> => {
     if (!code) return;
 
     const room = RoomStorage.getRoom(id);
@@ -469,7 +469,7 @@ export default function CodeShareRoomPage() {
   /**
    * 스냅샷 버전 변경 처리
    */
-  const handleVersionChange = (index) => {
+  const handleVersionChange = (index: number | null): void => {
     if (index === null) {
       setCurrentVersion(null);
       setActivePanel(null); // 현재 세션으로 돌아갈 때는 패널 닫기
