@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { FaHistory, FaCopy, FaCheck, FaInfoCircle } from "react-icons/fa";
-import { detectLanguage } from "@/utils/detect-language";
+import { detectLanguage } from "@/utils/detectLanguage";
 import MonacoEditor from "./monaco-editor";
 import { SnapshotEditorProps } from "@/types/editor.type";
-import { useThemeDetector } from "@/hooks/use-theme-detector";
+import { useThemeDetector } from "@/hooks/theme/useThemeDetector";
 
 /**
  * 스냅샷 전용 코드 에디터 컴포넌트 (읽기 전용)

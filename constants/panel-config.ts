@@ -1,3 +1,5 @@
+import { LAYOUT_SIZE } from '@/constants/ui.constants';
+
 interface PanelConfig {
   id: string;
   icon: string;
@@ -48,10 +50,10 @@ export const INITIAL_WIDTHS: InitialWidths = {
   RIGHT: 500, // 우측 사이드바 기본 너비
 
   // 최소 너비 설정
-  MIN_LEFT: 300, // 좌측 사이드바 최소 너비
-  MIN_RIGHT: 400, // 우측 패널 최소 너비
+  MIN_LEFT: LAYOUT_SIZE.SIDEBAR_MIN_WIDTH,
+  MIN_RIGHT: LAYOUT_SIZE.PANEL_MIN_WIDTH,
 
   // 최대 너비 비율 (화면 너비 대비)
-  MAX_LEFT_RATIO: 0.25, // 좌측 최대 너비 비율
-  MAX_RIGHT_RATIO: 0.35, // 우측 최대 너비 비율
+  MAX_LEFT_RATIO: LAYOUT_SIZE.SIDEBAR_MAX_RATIO,
+  MAX_RIGHT_RATIO: LAYOUT_SIZE.PANEL_MAX_RATIO,
 };

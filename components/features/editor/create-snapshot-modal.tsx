@@ -1,12 +1,10 @@
 import { useState } from "react";
-import Modal from "../common/modal";
+import Modal from "@/components/ui/modal";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import TextArea from "@/components/ui/textarea";
 import FormField from "@/components/ui/form-field";
-
-const MAX_TITLE_LENGTH = 100;
-const MAX_DESCRIPTION_LENGTH = 255;
+import { TEXT_LENGTH, ERROR_MESSAGES, BUTTON_TEXT } from "@/constants/ui.constants";
 
 /**
  * 스냅샷 생성을 위한 모달 컴포넌트
@@ -28,22 +26,22 @@ export default function CreateSnapshotModal({
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value;
-    if (newTitle.length <= MAX_TITLE_LENGTH) {
+    if (newTitle.length <= TEXT_LENGTH.SNAPSHOT_TITLE_MAX) {
       setTitle(newTitle);
       setTitleError("");
     } else {
-      setTitleError(`제목은 ${MAX_TITLE_LENGTH}자를 초과할 수 없습니다.`);
+      setTitleError(ERROR_MESSAGES.TITLE_MAX_LENGTH(TEXT_LENGTH.SNAPSHOT_TITLE_MAX));
     }
   };
 
   const handleDescriptionChange = (e) => {
     const newDescription = e.target.value;
-    if (newDescription.length <= MAX_DESCRIPTION_LENGTH) {
+    if (newDescription.length <= TEXT_LENGTH.SNAPSHOT_DESCRIPTION_MAX) {
       setDescription(newDescription);
       setDescriptionError("");
     } else {
       setDescriptionError(
-        `설명은 ${MAX_DESCRIPTION_LENGTH}자를 초과할 수 없습니다.`
+        ERROR_MESSAGES.DESCRIPTION_MAX_LENGTH(TEXT_LENGTH.SNAPSHOT_DESCRIPTION_MAX)
       );
     }
   };
@@ -57,8 +55,8 @@ export default function CreateSnapshotModal({
     if (!title) return;
 
     if (
-      title.length > MAX_TITLE_LENGTH ||
-      description.length > MAX_DESCRIPTION_LENGTH
+      title.length > TEXT_LENGTH.SNAPSHOT_TITLE_MAX ||
+      description.length > TEXT_LENGTH.SNAPSHOT_DESCRIPTION_MAX
     ) {
       return;
     }
@@ -89,14 +87,14 @@ export default function CreateSnapshotModal({
           error={titleError}
           showCharCount
           currentLength={title.length}
-          maxLength={MAX_TITLE_LENGTH}
+          maxLength={TEXT_LENGTH.SNAPSHOT_TITLE_MAX}
           required
         >
           <Input
             type="text"
             value={title}
             onChange={handleTitleChange}
-            maxLength={MAX_TITLE_LENGTH}
+            maxLength={TEXT_LENGTH.SNAPSHOT_TITLE_MAX}
             placeholder="Enter snapshot title"
             required
             autoFocus
@@ -109,12 +107,12 @@ export default function CreateSnapshotModal({
           error={descriptionError}
           showCharCount
           currentLength={description.length}
-          maxLength={MAX_DESCRIPTION_LENGTH}
+          maxLength={TEXT_LENGTH.SNAPSHOT_DESCRIPTION_MAX}
         >
           <TextArea
             value={description}
             onChange={handleDescriptionChange}
-            maxLength={MAX_DESCRIPTION_LENGTH}
+            maxLength={TEXT_LENGTH.SNAPSHOT_DESCRIPTION_MAX}
             className="h-32"
             placeholder="Enter snapshot description"
           />
@@ -128,7 +126,7 @@ export default function CreateSnapshotModal({
             variant="secondary"
             size="md"
           >
-            Cancel
+            {BUTTON_TEXT.CANCEL}
           </Button>
 
           <Button
@@ -137,7 +135,7 @@ export default function CreateSnapshotModal({
             variant="primary"
             size="md"
           >
-            Create
+            {BUTTON_TEXT.CREATE}
           </Button>
         </div>
       </form>

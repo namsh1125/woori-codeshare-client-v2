@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import { RoomInfo } from "@/utils/room-storage";
+import { RoomInfo } from "@/utils/roomStorage";
 
 interface RoomContextType {
   roomInfo: RoomInfo | null;
