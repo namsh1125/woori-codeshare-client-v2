@@ -42,6 +42,7 @@ export default function RoomCreateModal({
               focus:ring-2 focus:ring-blue-500/20
               focus:border-blue-500/50
               rounded-lg transition-colors"
+            autoFocus
             required
           />
         </div>
