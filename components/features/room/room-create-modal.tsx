@@ -42,6 +42,7 @@ export default function RoomCreateModal({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            autoFocus
             required
           />
         </FormField>

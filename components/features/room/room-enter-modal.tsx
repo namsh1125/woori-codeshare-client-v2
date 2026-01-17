@@ -23,6 +23,7 @@ export default function RoomEnterModal({ isOpen, onClose, onSubmit }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoFocus
             required
           />
         </FormField>
